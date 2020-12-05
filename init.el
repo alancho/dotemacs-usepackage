@@ -18,25 +18,26 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(display-time-mode 1)
+(delete-selection-mode 1)
+(show-paren-mode 1)
+(electric-pair-mode 1)
+(visual-line-mode 1)
+(global-linum-mode 1)
 
 ;; Mis preferencias visuales
-(setq display-time-mode 1
-      delete-selection-mode 1
-      shift-select-mode t
+(setq shift-select-mode t
       transient-mark-mode t
       auto-save-default nil
-      show-paren-mode 1
-      electric-pair-mode 1
-      visual-line-mode 1
       visible-bell t
       prefer-coding-system 'utf-8
       column-number-mode t
-      global-linum-mode 1
       redisplay-dont-pause t
       scroll-margin 1
       scroll-step 1
       scroll-conservatively 10000
-      scroll-preserve-screen-position 1)
+      scroll-preserve-screen-position 1
+      ring-bell-function #'ignore)
 
 ;; Desactivar overwrite mode por favor
 (define-key global-map [(insert)] nil)
