@@ -13,27 +13,37 @@
 
 (set-face-attribute 'default nil :height 105 :family "monospace" :weight 'normal :width 'normal)
 
-(display-time-mode 1)
-(delete-selection-mode 1)
-(setq shift-select-mode t)
-(transient-mark-mode t)
-(setq-default line-spacing 1)
-(setq auto-save-default nil)
+(load-theme 'tango-dark)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(show-paren-mode 1)
-(electric-pair-mode 1)
-(visual-line-mode 1)
-(setq visible-bell t)
-(prefer-coding-system 'utf-8)
-(setq column-number-mode t)
 
-(setq redisplay-dont-pause t
+;; Mis preferencias visuales
+(setq display-time-mode 1
+      delete-selection-mode 1
+      shift-select-mode t
+      transient-mark-mode t
+      auto-save-default nil
+      show-paren-mode 1
+      electric-pair-mode 1
+      visual-line-mode 1
+      visible-bell t
+      prefer-coding-system 'utf-8
+      column-number-mode t
+      global-linum-mode 1
+      redisplay-dont-pause t
       scroll-margin 1
       scroll-step 1
       scroll-conservatively 10000
       scroll-preserve-screen-position 1)
+
+;; Desactivar overwrite mode por favor
+(define-key global-map [(insert)] nil)
+
+(setq-default line-spacing 1)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 (use-package ivy
   :diminish (ivy-mode . "")
@@ -50,7 +60,7 @@
           (counsel-find-file . ivy--regex-plus)
           (counsel-locate . ivy--regex-plus)
           (counsel-M-x . ivy--regex-plus)
-          (t   . ivy--regex-plus))))
+          (t . ivy--regex-plus))))
 
 (use-package counsel
   :ensure t
@@ -59,11 +69,7 @@
   (("C-c C-r" . ivy-resume)
    ("C-x b" . ivy-switch-buffer)
    ("M-x" . counsel-M-x)
-   ;; ("C-M-i" . counsel-imenu)
    ("C-x C-f" . counsel-find-file)
-   ;; ("C-c d" . counsel-dired-jump)
-   ;; ("C-c j" . counsel-git-grep)
-   ;; ("C-x C-d" . counsel-ag)
    ("C-x C-d" . counsel-rg)
    ("C-x C-r" . counsel-recentf)
    ("C-x C-l" . counsel-locate)
@@ -71,21 +77,19 @@
   :config
   (ivy-mode 1)
   (setq ivy-height 10)
-  ;; (setq counsel-find-file-at-point t)
   (setq ivy-use-virtual-buffers t)
   (setq ivy-display-style 'fancy)
   (setq ivy-initial-inputs-alist nil)
-  (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done))
+  (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
+  (setq counsel-rg-base-command
+	"rg -i -M 120 --no-heading --line-number --color never %s . -tr"))
 
 (use-package swiper
   :ensure t
   :bind*
   (("C-s" . swiper)
    ("C-r" . swiper)
-   ("C-M-s" . swiper-all))
-  :bind
-  (:map read-expression-map
-        ("C-r" . counsel-expression-history)))
+   ("C-M-s" . swiper-all)))
 
 (use-package avy
   :ensure t
@@ -97,3 +101,54 @@
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status))
+
+(use-package ess
+  :ensure t
+  :init (require 'ess-site)
+  :config
+  (setq ess-ask-for-ess-directory nil)
+  (setq ess-local-process-name "R")
+  (setq ansi-color-for-comint-mode 'filter)
+  (setq comint-scroll-to-bottom-on-input t)
+  (setq comint-scroll-to-bottom-on-output t)
+  (setq comint-move-point-for-output t)
+  (setq ess-eval-visibly-p nil)
+  (setq ess-eval-visibly 'nowait)
+  (setq ess-default-style 'RStudio)
+  (setq fill-column 72)
+  (setq comment-auto-fill-only-comments t)
+  (auto-fill-mode t))
+
+(use-package yaml-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode)))
+
+(use-package projectile
+  :ensure t
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :config
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-enable-caching t)
+  (projectile-mode))
+
+(use-package writeroom-mode
+  :ensure t
+  :config
+  (setq writeroom-width 120))
+
+(use-package poly-markdown
+  :ensure t)
+
+(use-package poly-R
+  :ensure t)
+
+(use-package polymode
+  :ensure t
+  :init
+  (require 'polymode)
+  (require 'poly-markdown)
+  (require 'poly-R)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode)))
