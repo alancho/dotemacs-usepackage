@@ -43,6 +43,7 @@
 (define-key global-map [(insert)] nil)
 
 (setq-default line-spacing 1)
+(set-default 'truncate-lines t)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -83,7 +84,7 @@
   (setq ivy-initial-inputs-alist nil)
   (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
   (setq counsel-rg-base-command
-	"rg -i -M 120 --no-heading --line-number --color never %s . -tr"))
+	"rg -i -M 120 --no-heading --line-number %s . -tr /home/alancho/"))
 
 (use-package swiper
   :ensure t
