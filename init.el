@@ -6,6 +6,11 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+
 (setq custom-file "~/.emacs.d/custom-file.el")
 (load-file custom-file)
 
@@ -75,15 +80,18 @@
    ("C-x C-d" . counsel-rg)
    ("C-x C-r" . counsel-recentf)
    ("C-x C-l" . counsel-locate)
-   ("M-y" . counsel-yank-pop))
+   ;; ("TAB" . 'ivy-alt-done)
+   ("M-y" . counsel-yank-pop)
+   (:map ivy-minibuffer-map
+	 ("TAB" . 'ivy-alt-done)))
   :config
   (ivy-mode 1)
-  (setq ivy-height 10)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-display-style 'fancy)
-  (setq ivy-initial-inputs-alist nil)
-  (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
-  (setq counsel-rg-base-command
+  (setq ivy-height 10
+	ivy-use-virtual-buffers t
+	ivy-display-style 'fancy
+	ivy-initial-inputs-alist nil
+  ;; (define-key ivy-minibuffer-map (kbd "TAB") 'ivy-alt-done)
+  counsel-rg-base-command
 	"rg -i -M 120 --no-heading --line-number %s . -tr /home/alancho/"))
 
 (use-package swiper
@@ -104,22 +112,51 @@
   :ensure t
   :bind ("C-x g" . magit-status))
 
+(defun then_R_operator ()
+  "R - %>% operator or 'then' pipe operator"
+  (interactive)
+  (just-one-space 1)
+  (insert "%>%")
+  (reindent-then-newline-and-indent))
+
+(defun then_ggplot_plus ()
+  (interactive)
+  (just-one-space 1)
+  (insert "+")
+  (reindent-then-newline-and-indent))
+
+(defun forbid-vertical-split ()
+  "Only permit horizontal window splits."
+  (setq-local split-height-threshold nil)
+  (setq-local split-width-threshold 0))
+
 (use-package ess
   :ensure t
+  :hook (ess-mode-hook . forbid-vertical-split)
   :init (require 'ess-site)
   :config
-  (setq ess-ask-for-ess-directory nil)
-  (setq ess-local-process-name "R")
-  (setq ansi-color-for-comint-mode 'filter)
-  (setq comint-scroll-to-bottom-on-input t)
-  (setq comint-scroll-to-bottom-on-output t)
-  (setq comint-move-point-for-output t)
-  (setq ess-eval-visibly-p nil)
-  (setq ess-eval-visibly 'nowait)
-  (setq ess-default-style 'RStudio)
-  (setq fill-column 72)
-  (setq comment-auto-fill-only-comments t)
-  (auto-fill-mode t))
+  (setq ess-ask-for-ess-directory nil
+	ess-local-process-name "R"
+	ansi-color-for-comint-mode 'filter
+	comint-scroll-to-bottom-on-input t
+	comint-scroll-to-bottom-on-output t
+	comint-move-point-for-output t
+	ess-eval-visibly-p t
+	ess-eval-visibly 'nowait
+	ess-default-style 'RStudio
+	fill-column 72
+	comment-auto-fill-only-comments t)
+  (auto-fill-mode t)
+  :bind (:map ess-mode-map
+	      ("C-<return>" . 'then_R_operator)
+	      ("M-<return>" . 'then_ggplot_plus)
+	      ("_" . 'ess-insert-assign)
+	      ("S-<return>" . 'ess-eval-region-or-function-or-paragraph-and-step)
+         :map inferior-ess-r-mode-map
+	      ("C-<return>" . 'then_R_operator)
+	      ("M-<return>" . 'then_ggplot_plus)
+	      ("_" . 'ess-insert-assign))
+  	      ("S-<return>" . 'ess-eval-region-or-function-or-paragraph-and-step))
 
 (use-package yaml-mode
   :ensure t
@@ -154,3 +191,28 @@
   (require 'poly-R)
   :config
   (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode)))
+
+(use-package pyvenv
+  :ensure t
+  :init
+  (setenv "WORKON_HOME" "~/anaconda3/envs/"))
+
+;; (use-package company
+;;   :ensure t
+;;   :config
+;;   (setq company-idle-delay 0)
+;;   (setq company-minimum-prefix-length 1))
+
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :hook (python-mode . lsp-deferred)
+;;   :commands (lsp lsp-deferred))
+
+;; (use-package company-lsp
+;;   :ensure t
+;;   :config
+;;   (push 'company-lsp company-backends))
+
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :hook (lsp-mode . lsp-ui-mode))
