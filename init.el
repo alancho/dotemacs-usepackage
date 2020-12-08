@@ -198,6 +198,16 @@
   :init
   (setenv "WORKON_HOME" "~/anaconda3/envs/"))
 
+(use-package company
+  :ensure t
+  :defer 1
+  :config
+  (global-company-mode))
+
+;; (use-package company-box
+;;   :ensure t
+;;   :hook (company-mode . company-box-mode))
+
 ;; (use-package company
 ;;   :ensure t
 ;;   :config
@@ -217,3 +227,17 @@
 ;; (use-package lsp-ui
 ;;   :ensure t
 ;;   :hook (lsp-mode . lsp-ui-mode))
+
+;; (use-package lsp-python-ms
+;;   :ensure t
+;;   :hook (python-mode . (lambda ()
+;;                          (require 'lsp-python-ms)
+;;                          (lsp)))
+;;   :init
+;;   (setq lsp-python-ms-executable (executable-find "python-language-server")))
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
