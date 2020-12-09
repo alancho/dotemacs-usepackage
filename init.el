@@ -132,17 +132,17 @@
 
 (use-package ess
   :ensure t
-  :hook (ess-mode-hook . forbid-vertical-split)
+  ;; :hook (ess-mode-hook . forbid-vertical-split)
   :init (require 'ess-site)
   :config
   (setq ess-ask-for-ess-directory nil
 	ess-local-process-name "R"
 	ansi-color-for-comint-mode 'filter
-	comint-scroll-to-bottom-on-input t
-	comint-scroll-to-bottom-on-output t
-	comint-move-point-for-output t
-	ess-eval-visibly-p t
-	ess-eval-visibly 'nowait
+	;; comint-scroll-to-bottom-on-input t
+	;; comint-scroll-to-bottom-on-output t
+	;; comint-move-point-for-output t
+	;; ess-eval-visibly-p t
+	;; ess-eval-visibly 'nowait
 	ess-default-style 'RStudio
 	fill-column 72
 	comment-auto-fill-only-comments t)
@@ -198,11 +198,11 @@
   :init
   (setenv "WORKON_HOME" "~/anaconda3/envs/"))
 
-(use-package company
-  :ensure t
-  :defer 1
-  :config
-  (global-company-mode))
+;; (use-package company
+;;   :ensure t
+;;   :defer 1
+;;   :config
+;;   (global-company-mode))
 
 ;; (use-package company-box
 ;;   :ensure t
@@ -236,8 +236,13 @@
 ;;   :init
 ;;   (setq lsp-python-ms-executable (executable-find "python-language-server")))
 
-(use-package lsp-pyright
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :hook (python-mode . (lambda ()
+;;                           (require 'lsp-pyright)
+;;                           (lsp))))  ; or lsp-deferred
+
+(use-package exec-path-from-shell
   :ensure t
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+  :config
+  (exec-path-from-shell-initialize))
